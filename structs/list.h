@@ -25,6 +25,7 @@ listtype_t l_front(CONST_LIST_PARAM);
 listtype_t l_back(CONST_LIST_PARAM);
 listtype_t l_value(const list_el_t *const el);
 
+void l_insert(LIST_PARAM, list_el_t *const el, listtype_t val);
 void l_push_back(LIST_PARAM, listtype_t val);
 void l_push_front(LIST_PARAM, listtype_t val);
 void l_erase(LIST_PARAM, list_el_t *el);

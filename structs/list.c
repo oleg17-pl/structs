@@ -3,7 +3,7 @@
 
 #include "list.h"
 
-static list_el_t *create_el() {
+static list_el_t *create_el(void) {
 	return (list_el_t *)malloc(sizeof(list_el_t));
 }
 
@@ -60,6 +60,22 @@ listtype_t l_value(const list_el_t *const el) {
 	return el->value;
 }
 
+void l_insert(LIST_PARAM, list_el_t *const el, listtype_t val) {
+	if (el == NULL) {
+		return;
+	}
+	list_el_t *new_el = create_el();
+	if (el == list->first) {
+		list->first = new_el;
+	}
+	new_el->value = val;
+	new_el->next = el;
+	new_el->prev = el->prev;
+	if (el->prev != NULL) {
+		el->prev->next = new_el;
+	}
+}
+
 void l_push_back(LIST_PARAM, listtype_t val) {
 	if (!l_empty(list)) {
 		list_el_t *last = l_end(list), *new_el = create_el();
@@ -81,6 +97,7 @@ void l_push_back(LIST_PARAM, listtype_t val) {
 }
 
 void l_push_front(LIST_PARAM, listtype_t val) {
+	/*
 	list_el_t *new_first = create_el();
 	new_first->value = val;
 	new_first->prev = NULL;
@@ -89,6 +106,8 @@ void l_push_front(LIST_PARAM, listtype_t val) {
 		l_begin(list)->prev = new_first;
 	}
 	list->first = new_first;
+	*/
+	l_insert(list, l_begin(list), val);
 }
 
 void l_erase(LIST_PARAM, list_el_t *el) {

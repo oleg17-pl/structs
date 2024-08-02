@@ -11,19 +11,15 @@ void vector_test(void) {
 void list_test(void) {
 	list_t list = l_create();
 
-	l_push_back(&list, 30);
 	l_push_back(&list, 10);
-	l_push_back(&list, 40);
-	l_push_back(&list, 70);
 	l_push_back(&list, 20);
-	l_push_back(&list, 80);
+	l_push_back(&list, 30);
+	l_push_back(&list, 40);
+	l_push_back(&list, 50);
+	l_push_back(&list, 60);
+	l_print(&list);
 
-	l_print(&list);
-	l_swap(&list, l_begin(&list), l_end(&list));
-	l_print(&list);
-	l_pop_back(&list);
-	l_print(&list);
-	l_erase(&list, l_at(&list, 3));
+	l_insert(&list, l_at(&list, 0), 100);
 	l_print(&list);
 }
 
