@@ -158,42 +158,110 @@ void l_pop_front(LIST_PARAM) {
 	l_erase(list, l_begin(list));
 }
 
-void l_swap(LIST_PARAM, list_el_t *const el1, list_el_t *const el2) {
-	if (el1 == el2) {
+// chat gpt wrote
+void l_swapels(LIST_PARAM, list_el_t *const el1, list_el_t *const el2) {
+	if (el1 == el2 || el1 == NULL || el2 == NULL) {
 		return;
 	}
-	if (el1 == list->first) {
+
+	if (el1->next == el2) {
+		el1->next = el2->next;
+		el2->prev = el1->prev;
+		el2->next = el1;
+		el1->prev = el2;
+
+		if (el1->next != NULL) {
+			el1->next->prev = el1;
+		}
+		if (el2->prev != NULL) {
+			el2->prev->next = el2;
+		}
+	}
+	else if (el2->next == el1) {
+		el2->next = el1->next;
+		el1->prev = el2->prev;
+		el1->next = el2;
+		el2->prev = el1;
+
+		if (el2->next != NULL) {
+			el2->next->prev = el2;
+		}
+		if (el1->prev != NULL) {
+			el1->prev->next = el1;
+		}
+	}
+	else {
+		list_el_t *tmp_next = el1->next;
+		list_el_t *tmp_prev = el1->prev;
+
+		el1->next = el2->next;
+		el1->prev = el2->prev;
+		el2->next = tmp_next;
+		el2->prev = tmp_prev;
+
+		if (el1->next != NULL) {
+			el1->next->prev = el1;
+		}
+		if (el1->prev != NULL) {
+			el1->prev->next = el1;
+		}
+		if (el2->next != NULL) {
+			el2->next->prev = el2;
+		}
+		if (el2->prev != NULL) {
+			el2->prev->next = el2;
+		}
+	}
+
+	if (list->first == el1) {
 		list->first = el2;
 	}
-	else if (el2 == list->first) {
+	else if (list->first == el2) {
 		list->first = el1;
 	}
-
-	list_el_t *tmp_next = el1->next;
-	list_el_t *tmp_prev = el1->prev;
-
-	if (el1->prev != NULL) {
-		el1->prev->next = el2;
-	}
-	if (el1->next != NULL) {
-		el1->next->prev = el2;
-	}
-	el1->next = el2->next;
-	el1->prev = el2->prev;
-
-	if (el2->prev != NULL) {
-		el2->prev->next = el1;
-	}
-	if (el2->next != NULL) {
-		el1->next->prev = el1;
-	}
-	el2->next = tmp_next;
-	el2->prev = tmp_prev;
 }
 
-list_t l_create(void) {
-	list_t list;
-	list.first = NULL;
+void l_swap(LIST_PARAM, LIST_PARAM_2) {
+	list_el_t *tmp_el = l_begin(list);
+	list->first = l_begin(list2);
+	list2->first = tmp_el;
+}
+
+char l_isless(listtype_t a, listtype_t b) {
+	return a < b;
+}
+
+char l_isgreater(listtype_t a, listtype_t b) {
+	return a > b;
+}
+
+void l_sort(LIST_PARAM, comp_t comp) {
+	if (comp == NULL) {
+		comp = l_isless;
+	}
+	// selection algorithm
+	size_t n = l_size(list);
+	for (size_t i = 0; i < n - 1; i++) {
+		size_t target_index = i;
+		for (size_t el = i + 1; el < n; el++) {
+			list_el_t *check = l_at(list, el);
+			list_el_t *target = l_at(list, target_index);
+			if (comp(l_value(check), l_value(target))) {
+				target_index = el;
+			}
+		}
+		if (target_index != i) {
+			l_swapels(list, l_at(list, target_index), l_at(list, i));
+		}
+	}
+}
+
+list_t *l_create(void) {
+	list_t *list = (list_t *)malloc(sizeof(list_t));
+	if (list == NULL) {
+		return NULL;
+	}
+	list->first = NULL;
 	return list;
 }
 
@@ -201,6 +269,11 @@ void l_clear(LIST_PARAM) {
 	while (!l_empty(list)) {
 		l_pop_back(list);
 	}
+}
+
+void l_free(LIST_PARAM) {
+	l_clear(list);
+	free(list);
 }
 
 void l_print(CONST_LIST_PARAM) {
