@@ -37,6 +37,7 @@ void l_pop_front(LIST_PARAM);
 
 void l_swapels(LIST_PARAM, list_el_t *const el1, list_el_t *const el2);
 void l_swap(LIST_PARAM, LIST_PARAM_2);
+void l_reverse(LIST_PARAM);
 char l_isless(listtype_t a, listtype_t b);
 char l_isgreater(listtype_t a, listtype_t b);
 void l_sort(LIST_PARAM, comp_t comp);

@@ -10,10 +10,11 @@ void vector_test(void) {
 
 void list_test(void) {
 	list_t *list = l_create();
-	for (size_t i = 0; i < 999; i++) {
-		l_push_back(list, rand());
+	for (size_t i = 0; i < 9; i++) {
+		l_push_back(list, i);
 	}
-	l_sort(list, l_isless);
+	l_print(list);
+	l_reverse(list);
 	l_print(list);
 	l_free(list);
 	/*

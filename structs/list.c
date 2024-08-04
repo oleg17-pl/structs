@@ -227,6 +227,22 @@ void l_swap(LIST_PARAM, LIST_PARAM_2) {
 	list2->first = tmp_el;
 }
 
+void l_reverse(LIST_PARAM) {
+	size_t n = l_size(list);
+	if (n == 1 || n == 0) {
+		return;
+	}
+	for (size_t i = 0; i < n; i++) {
+		if (i == (int)(n / 2)) {
+			break;
+		}
+		size_t b = n - i - 1;
+		list_el_t *front_el = l_at(list, i);
+		list_el_t *back_el = l_at(list, b);
+		l_swapels(list, front_el, back_el);
+	}
+}
+
 char l_isless(listtype_t a, listtype_t b) {
 	return a < b;
 }
