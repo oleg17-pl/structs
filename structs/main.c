@@ -17,24 +17,6 @@ void list_test(void) {
 	l_reverse(list);
 	l_print(list);
 	l_free(list);
-	/*
-	list_t *list = l_create(), *list2 = l_create();
-	l_push_back(list, 1);
-	l_push_back(list, 2);
-	l_push_back(list, 3);
-
-	l_push_back(list2, 4);
-	l_push_back(list2, 3);
-	l_push_back(list2, 2);
-	l_push_back(list2, 1);
-
-	l_print(list);
-	l_print(list2);
-
-	l_swap(list, list2);
-	l_print(list);
-	l_print(list2);
-	*/
 }
 
 int main(void) {
