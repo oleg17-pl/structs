@@ -7,20 +7,24 @@ static list_el_t *create_el(void) {
 	return (list_el_t *)malloc(sizeof(list_el_t));
 }
 
+listtype_t el_value(const list_el_t *const el) {
+	return el->value;
+}
+
+list_el_t *el_next(const list_el_t *const el) {
+	return el->next;
+}
+
+list_el_t *el_prev(const list_el_t *const el) {
+	return el->prev;
+}
+
 char l_empty(CONST_LIST_PARAM) {
 	return list->first == NULL;
 }
 
 size_t l_size(CONST_LIST_PARAM) {
-	if (l_empty(list)) {
-		return 0;
-	}
-	size_t l_size = 1;
-	list_el_t *curr_el = list->first;
-	for (l_size; curr_el->next != NULL; l_size++) {
-		curr_el = curr_el->next;
-	}
-	return l_size;
+	return list->size;
 }
 
 list_el_t *l_begin(CONST_LIST_PARAM) {
@@ -31,7 +35,7 @@ list_el_t *l_end(CONST_LIST_PARAM) {
 	list_el_t *last = l_begin(list);
 	if (last != NULL) {
 		while (last->next != NULL) {
-			last = last->next;
+			last = el_next(last);
 		}
 	}
 	return last;
@@ -49,42 +53,53 @@ list_el_t *l_at(CONST_LIST_PARAM, size_t index) {
 }
 
 listtype_t l_front(CONST_LIST_PARAM) {
-	return l_begin(list) == NULL ? 0 : l_begin(list)->value;
+	return l_empty(list) ? 0 : el_value(l_begin(list));
 }
 
 listtype_t l_back(CONST_LIST_PARAM) {
-	return l_end(list) == NULL ? 0 : l_end(list)->value;
-}
-
-listtype_t l_value(const list_el_t *const el) {
-	return el->value;
+	return l_empty(list) ? 0 : el_value(l_end(list));
 }
 
 void l_insert(LIST_PARAM, list_el_t *const el, listtype_t val) {
-	if (el == NULL) {
-		return;
-	}
 	list_el_t *new_el = create_el();
-	if (el == list->first) {
-		list->first = new_el;
-	}
 	new_el->value = val;
-	new_el->next = el;
-	new_el->prev = el->prev;
-	if (el->prev != NULL) {
-		el->prev->next = new_el;
+	if (l_empty(list)) {
+		list->first = new_el;
+		new_el->prev = NULL;
+		new_el->next = NULL;
 	}
+	else {
+		if (el == NULL) {
+			return;
+		}
+		if (el == l_begin(list)) {
+			list->first = new_el;
+			new_el->prev = el->prev;
+			new_el->next = el;
+			el->prev = new_el;
+		}
+		else {
+			new_el->next = el;
+			new_el->prev = el_prev(el);
+			if (el_prev(el) != NULL) {
+				el->prev->next = new_el;
+			}
+			el->prev = new_el;
+		}
+	}
+	list->size++;
 }
 
 void l_push_back(LIST_PARAM, listtype_t val) {
 	if (!l_empty(list)) {
 		list_el_t *last = l_end(list), *new_el = create_el();
 		new_el->value = val;
-		if (last->next != NULL) {
+		new_el->next = el_next(last);
+		last->next = new_el;
+		last->next = new_el;
+		if (el_next(last) != NULL) {
 			last->next->prev = new_el;
 		}
-		new_el->next = last->next;
-		last->next = new_el;
 		new_el->prev = last;
 	}
 	else {
@@ -94,6 +109,7 @@ void l_push_back(LIST_PARAM, listtype_t val) {
 		frst->prev = NULL;
 		frst->next = NULL;
 	}
+	list->size++;
 }
 
 void l_push_front(LIST_PARAM, listtype_t val) {
@@ -114,16 +130,18 @@ void l_erase(LIST_PARAM, list_el_t *el) {
 	if (el == NULL) {
 		return;
 	}
-	if (el->prev != NULL) {
-		el->prev->next = el->next;
+	list_el_t *prev_el = el_prev(el), *next_el = el_next(el);
+	if (prev_el != NULL) {
+		prev_el->next = next_el;
 	}
-	if (el->next != NULL) {
-		el->next->prev = el->prev;
+	if (next_el != NULL) {
+		next_el->prev = prev_el;
 	}
-	if (el == list->first) {
-		list->first = el->next;
+	if (el == l_begin(list)) {
+		list->first = next_el;
 	}
 	free(el);
+	list->size--;
 }
 
 void l_pop_back(LIST_PARAM) {
@@ -165,8 +183,8 @@ void l_swapels(LIST_PARAM, list_el_t *const el1, list_el_t *const el2) {
 	}
 
 	if (el1->next == el2) {
-		el1->next = el2->next;
-		el2->prev = el1->prev;
+		el1->next = el_next(el2);
+		el2->prev = el_prev(el1);
 		el2->next = el1;
 		el1->prev = el2;
 
@@ -178,8 +196,8 @@ void l_swapels(LIST_PARAM, list_el_t *const el1, list_el_t *const el2) {
 		}
 	}
 	else if (el2->next == el1) {
-		el2->next = el1->next;
-		el1->prev = el2->prev;
+		el2->next = el_next(el1);
+		el1->prev = el_prev(el2);
 		el1->next = el2;
 		el2->prev = el1;
 
@@ -191,11 +209,11 @@ void l_swapels(LIST_PARAM, list_el_t *const el1, list_el_t *const el2) {
 		}
 	}
 	else {
-		list_el_t *tmp_next = el1->next;
-		list_el_t *tmp_prev = el1->prev;
+		list_el_t *tmp_next = el_next(el1);
+		list_el_t *tmp_prev = el_prev(el1);
 
-		el1->next = el2->next;
-		el1->prev = el2->prev;
+		el1->next = el_next(el2);
+		el1->prev = el_prev(el2);
 		el2->next = tmp_next;
 		el2->prev = tmp_prev;
 
@@ -223,8 +241,11 @@ void l_swapels(LIST_PARAM, list_el_t *const el1, list_el_t *const el2) {
 
 void l_swap(LIST_PARAM, LIST_PARAM_2) {
 	list_el_t *tmp_el = l_begin(list);
+	size_t tmp_size = list->size;
 	list->first = l_begin(list2);
 	list2->first = tmp_el;
+	list->size = list2->size;
+	list2->size = tmp_size;
 }
 
 void l_reverse(LIST_PARAM) {
@@ -262,7 +283,7 @@ void l_sort(LIST_PARAM, comp_t comp) {
 		for (size_t el = i + 1; el < n; el++) {
 			list_el_t *check = l_at(list, el);
 			list_el_t *target = l_at(list, target_index);
-			if (comp(l_value(check), l_value(target))) {
+			if (comp(el_value(check), el_value(target))) {
 				target_index = el;
 			}
 		}
@@ -278,6 +299,7 @@ list_t *l_create(void) {
 		return NULL;
 	}
 	list->first = NULL;
+	list->size = 0;
 	return list;
 }
 
@@ -285,6 +307,7 @@ void l_clear(LIST_PARAM) {
 	while (!l_empty(list)) {
 		l_pop_back(list);
 	}
+	list->size = 0;
 }
 
 void l_free(LIST_PARAM) {
@@ -298,7 +321,7 @@ void l_print(CONST_LIST_PARAM) {
 	if (n != 0) {
 		printf("list info: size: %u\n\n", n);
 		for (size_t i = 0; i < n; i++) {
-			printf("index: %i; value: %i\n", i, l_value(l_at(list, i)));
+			printf("index: %i; value: %i\n", i, el_value(l_at(list, i)));
 		}
 	}
 	else {

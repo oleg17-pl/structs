@@ -10,6 +10,7 @@ typedef struct list_el {
 } list_el_t;
 
 typedef struct list {
+	size_t size;
 	list_el_t *first;
 } list_t;
 
@@ -17,6 +18,10 @@ typedef struct list {
 #define LIST_PARAM_2 list_t *list2
 #define CONST_LIST_PARAM const list_t *const list
 #define CONST_LIST_PARAM_2 const list_t *const list2
+
+listtype_t el_value(const list_el_t *const el);
+list_el_t *el_next(const list_el_t *const el);
+list_el_t *el_prev(const list_el_t *const el);
 
 char l_empty(CONST_LIST_PARAM);
 size_t l_size(CONST_LIST_PARAM);
@@ -26,7 +31,6 @@ list_el_t *l_end(CONST_LIST_PARAM);
 list_el_t *l_at(CONST_LIST_PARAM, size_t index);
 listtype_t l_front(CONST_LIST_PARAM);
 listtype_t l_back(CONST_LIST_PARAM);
-listtype_t l_value(const list_el_t *const el);
 
 void l_insert(LIST_PARAM, list_el_t *const el, listtype_t val);
 void l_push_back(LIST_PARAM, listtype_t val);
