@@ -9,7 +9,7 @@ void vector_test(void) {
 }
 
 void list_test(void) {
-	list_t *list = l_create();
+	plist_t list = l_create();
 	l_insert(list, l_at(list, 0), 10);
 	l_insert(list, l_at(list, 0), 20);
 	l_insert(list, l_at(list, 0), 3);
