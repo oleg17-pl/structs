@@ -3,9 +3,10 @@
 #include <stdio.h>
 
 void vector_test(void) {
-	vector_t vec = v_create();
-	v_push_back(&vec, 1);
-	v_print(&vec);
+	pvec_t vec = v_create();
+	v_push_back(vec, 1);
+	v_print(vec);
+	v_free(vec);
 }
 
 void list_test(void) {
@@ -19,6 +20,6 @@ void list_test(void) {
 }
 
 int main(void) {
-	list_test();
+	vector_test();
 	return 0;
 }

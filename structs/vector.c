@@ -4,7 +4,7 @@
 #include "vector.h"
 
 static void apply(VECTOR_PARAM) {
-	vectype_t *new_data = malloc(sizeof(vectype_t) * vec->reserved);
+	vectype_t *new_data = (vectype_t *)malloc(sizeof(vectype_t) * vec->reserved);
 	if (vec->data != NULL) {
 		for (size_t i = 0; i < vec->size; i++) {
 			new_data[i] = vec->data[i];
@@ -19,11 +19,11 @@ void v_reserve(VECTOR_PARAM, const size_t val) {
 	apply(vec);
 }
 
-vector_t v_create(void) {
-	vector_t vec;
-	vec.data = NULL;
-	vec.size = 0;
-	v_reserve(&vec, 1);
+pvec_t v_create(void) {
+	pvec_t vec = (pvec_t)malloc(sizeof(vec_t));
+	vec->data = NULL;
+	vec->size = 0;
+	v_reserve(vec, 1);
 	return vec;
 }
 
@@ -56,4 +56,9 @@ void v_pop_back(VECTOR_PARAM) {
 	}
 	vec->size--;
 	apply(vec);
+}
+
+void v_free(VECTOR_PARAM) {
+	free(vec->data);
+	free(vec);
 }

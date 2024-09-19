@@ -1,15 +1,16 @@
 #ifndef LIST_H
 #define LIST_H
 
+typedef char bool_t;
 typedef int listtype_t;
-typedef char(*compfunc_t)(listtype_t, listtype_t);
+typedef bool_t(*compfunc_t)(listtype_t, listtype_t);
 
-typedef struct lnode {
+typedef struct l_node {
 	listtype_t value;
-	struct lnode *prev, *next;
-} lnode_t;
+	struct l_node *prev, *next;
+} l_node_t;
 
-typedef lnode_t *l_iterator_t;
+typedef l_node_t *l_iterator_t;
 typedef const l_iterator_t const_l_iterator_t;
 
 typedef struct list {
@@ -27,7 +28,7 @@ listtype_t l_iter_value(const_l_iterator_t iter);
 l_iterator_t l_iter_next(const_l_iterator_t iter);
 l_iterator_t l_iter_prev(const_l_iterator_t iter);
 
-char l_empty(CONST_LIST_PARAM);
+bool_t l_empty(CONST_LIST_PARAM);
 size_t l_size(CONST_LIST_PARAM);
 
 l_iterator_t l_begin(CONST_LIST_PARAM);
@@ -46,8 +47,8 @@ void l_pop_front(LIST_PARAM);
 void l_swapels(LIST_PARAM, l_iterator_t const iter1, l_iterator_t const iter2);
 void l_swap(LIST_PARAM, LIST_PARAM_2);
 void l_reverse(LIST_PARAM);
-char l_isless(listtype_t a, listtype_t b);
-char l_isgreater(listtype_t a, listtype_t b);
+bool_t l_isless(listtype_t a, listtype_t b);
+bool_t l_isgreater(listtype_t a, listtype_t b);
 void l_sort(LIST_PARAM, compfunc_t compfunc);
 
 plist_t l_create(void);

@@ -4,7 +4,7 @@
 #include "list.h"
 
 static l_iterator_t create_node(void) {
-	return (l_iterator_t)malloc(sizeof(lnode_t));
+	return (l_iterator_t)malloc(sizeof(l_node_t));
 }
 
 listtype_t l_iter_value(const_l_iterator_t iter) {
@@ -19,7 +19,7 @@ l_iterator_t l_iter_prev(const_l_iterator_t iter) {
 	return iter->prev;
 }
 
-char l_empty(CONST_LIST_PARAM) {
+bool_t l_empty(CONST_LIST_PARAM) {
 	return list->head == NULL;
 }
 
@@ -104,10 +104,10 @@ void l_push_back(LIST_PARAM, listtype_t val) {
 	}
 	else {
 		list->head = create_node();
-		l_iterator_t frst = l_begin(list);
-		frst->value = val;
-		frst->prev = NULL;
-		frst->next = NULL;
+		l_iterator_t head = l_begin(list);
+		head->value = val;
+		head->prev = NULL;
+		head->next = NULL;
 	}
 	list->size++;
 }
@@ -225,16 +225,16 @@ void l_reverse(LIST_PARAM) {
 		}
 		size_t b = n - i - 1;
 		l_iterator_t front_node = l_at(list, i);
-		l_iterator_t front_node = l_at(list, b);
-		l_swapels(list, front_node, front_node);
+		l_iterator_t back_node = l_at(list, b);
+		l_swapels(list, front_node, back_node);
 	}
 }
 
-char l_isless(listtype_t a, listtype_t b) {
+bool_t l_isless(listtype_t a, listtype_t b) {
 	return a < b;
 }
 
-char l_isgreater(listtype_t a, listtype_t b) {
+bool_t l_isgreater(listtype_t a, listtype_t b) {
 	return a > b;
 }
 

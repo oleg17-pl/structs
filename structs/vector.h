@@ -8,16 +8,19 @@ typedef int vectype_t;
 typedef struct vector {
 	vectype_t *data;
 	size_t size, reserved;
-} vector_t;
+} vec_t;
 
-#define VECTOR_PARAM vector_t *vec
-#define CONST_VECTOR_PARAM const vector_t *const vec
+typedef vec_t *pvec_t;
 
-vector_t v_create(void);
+#define VECTOR_PARAM pvec_t vec
+#define CONST_VECTOR_PARAM const pvec_t const vec
+
+pvec_t v_create(void);
 void v_reserve(VECTOR_PARAM, const size_t val);
 void v_print(CONST_VECTOR_PARAM);
 void v_push_back(VECTOR_PARAM, const vectype_t val);
 void v_pop_back(VECTOR_PARAM);
+void v_free(VECTOR_PARAM);
 
 #endif // !VECTOR_H
  
